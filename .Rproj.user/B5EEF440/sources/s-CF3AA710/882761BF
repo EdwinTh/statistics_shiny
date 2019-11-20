@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1574170575889.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1923682435",
+    "id" : "882761BF",
+    "lastKnownWriteTime" : 1574236137,
+    "last_content_update" : 1574236137386,
+    "path" : "~/OneDrive - Funda Real Estate BV/PG 2019 Toolkit analysing data/db/server.R",
+    "project_path" : "server.R",
+    "properties" : {
+        "cursorPosition" : "63,2",
+        "scrollLine" : "63"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

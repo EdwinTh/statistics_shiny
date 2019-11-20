@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1574170656269.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "694605090",
+    "id" : "7E57DDAE",
+    "lastKnownWriteTime" : 1574174782,
+    "last_content_update" : 1574174782381,
+    "path" : "~/OneDrive - Funda Real Estate BV/PG 2019 Toolkit analysing data/db/distribution_overlap.R",
+    "project_path" : "distribution_overlap.R",
+    "properties" : {
+        "cursorPosition" : "27,1",
+        "scrollLine" : "5",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

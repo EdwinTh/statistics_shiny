@@ -1,0 +1,38 @@
+# currently works for beta only
+# needs to be expanded if we want to 
+# include other probability distributions
+calculate_overlap <- function(dens1, 
+                              dens2) {
+  stopifnot(is.function(dens1), is.function(dens2))
+  highest <- determine_order(dens1, dens2)
+  dens1_threshold <- determine_zero(dens1, highest)
+  dens2_threshold <- determine_zero(dens2, ifelse(highest == 1, 2, 1))
+  dens1_prob <- get_prob(dens1, dens2_threshold, highest)
+  dens2_prob <- get_prob(dens2, dens1_threshold, ifelse(highest == 1, 2, 1))
+  dens1_prob * dens2_prob
+}
+
+determine_order <- function(dens1, dens2) {
+  (dens2(.5) < dens1(.5)) + 1
+}
+
+beta_distribution <- function(alpha, beta) {
+  function(x) pbeta(x, alpha, beta)
+}
+
+determine_zero <- function(dens,
+                           end = c(1, 2),
+                           tolerance = .0001) {
+  grid <- seq(0, 1, by = .0001)
+  if (end == 1) {
+    grid[max(which(dens(grid) < tolerance))]
+  } else {
+    grid[min(which( (1 - dens(grid)) < tolerance))]
+  }
+}
+
+get_prob <- function(dens, threshold, end) {
+  prob <- dens(threshold)
+  if (end == 2) return(1 - prob)
+  prob
+}
