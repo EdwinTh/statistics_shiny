@@ -124,7 +124,7 @@ function(input, output, session) {
       normal_distribution(normal_pars()$mu1, normal_pars()$sig1),
       normal_distribution(normal_pars()$mu2, normal_pars()$sig2)
     )
-    paste0("Are we 95% certain the true proportions are different: ", post_overlap)
+    paste0("Are we 95% certain the true means are different: ", post_overlap)
   }) 
   
   conf_bounds_normal <- reactive({
@@ -181,7 +181,7 @@ function(input, output, session) {
       poisson_distribution(poisson_pars()$alpha1, poisson_pars()$beta1),
       poisson_distribution(poisson_pars()$alpha2, poisson_pars()$beta2)
     )
-    paste0("Are we 95% certain the true proportions are different: ", post_overlap)
+    paste0("Are we 95% certain the true rates are different: ", post_overlap)
   }) 
   
   
