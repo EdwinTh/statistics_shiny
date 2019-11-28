@@ -71,10 +71,25 @@ normal_posterior <- function(mean, sd, func) {
          p = p)
 }
 
+poisson_posterior <- function(alpha, beta, func) {
+  if (is.na(alpha) | is.na(beta)) return(NULL)
+  low  <- qgamma(.0001, alpha, beta)
+  high <- qgamma(.9999, alpha, beta)
+  x <- seq(low, high, length.out = 1000)
+  p <- if (func == "density") {
+    dgamma(x, alpha, beta)
+  } else {
+    pgamma(x, alpha, beta)
+  }
+  
+  dplyr::tibble(x = x, p = p)
+}
 
 plot_posterior <- function(x,
-                           x2 = NULL) {
+                           x2   = NULL,
+                           type = c("proportion", "mean", "rate")) {
   
+  type <- match.arg(type)
   x_range <- range(c(x$x, x2$x))
   
   f <- list(
@@ -84,16 +99,16 @@ plot_posterior <- function(x,
   )
   
   x_lab <- list(
-    title = "Proportion Value",
+    title = glue::glue("{capitalise(type)} Value"),
     titlefont = f,
     range = c(x_range[1], x_range[2])
   )
   
-  if (tail(x$p, 1) == 1) {
-    title_text <- "Probability true proportion is smaller than x"
+  if (tail(x$p, 1) == max(x$p)) {
+    title_text <- glue::glue("Probability true {type} is smaller than x")
     y_title    <- "Probability"
   } else {
-    title_text <- "Probability true proportion is exactly x"
+    title_text <- glue::glue("Probability true {type} is exactly x")
     y_title    <- "Density"
   }
   
@@ -129,6 +144,17 @@ plot_posterior <- function(x,
   cust_layout(pl)
 }
 
+calculate_ci_grid <- function(grid, width) {
+  low  <- .5 - ((width / 100) / 2)
+  high <- .5 + ((width / 100) / 2)
+  purrr::map_dbl(c(low, 0.5, high),
+                 ~find_closest(.x, grid)) %>% 
+    round(3)
+}
+
+find_closest <- function(quant, grid) {
+  grid$x[which.min(abs(quant - grid$p))]
+}
 
 calculate_ci <- function(alpha, beta, width) {
   low  <- .5 - ((width / 100) / 2)
@@ -137,5 +163,13 @@ calculate_ci <- function(alpha, beta, width) {
     round(3)
 }
 
+calculate_ci_poisson <- function(alpha, beta, width) {
+  low  <- .5 - ((width / 100) / 2)
+  high <- .5 + ((width / 100) / 2)
+  qgamma(c(low, 0.5, high), alpha, beta) %>%
+    round(3)
+}
 
-
+capitalise <- function(word) {
+  paste0(toupper(substr(word, 1, 1)), substr(word, 2, nchar(word)))
+}

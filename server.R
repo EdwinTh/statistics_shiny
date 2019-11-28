@@ -47,27 +47,28 @@ function(input, output, session) {
     )
   )
 
-  output$low <- renderText(
-    calculate_ci(beta_pars()$alpha1, beta_pars()$beta1, input$ci)[1] %>%
-      paste("Lower bound:", .)
+  conf_bounds_beta <- reactive({
+    calculate_ci(beta_pars()$alpha1, beta_pars()$beta1, input$ci)
+  })
+  
+  output$beta_low <- renderText(
+    paste("Lower bound:", conf_bounds_beta()[1])
   )
 
-  output$midpoint <- renderText(
-    calculate_ci(beta_pars()$alpha1, beta_pars()$beta1, input$ci)[2] %>%
-      paste("Mid point:", .)
+  output$beta_midpoint <- renderText(
+    paste("Mid point:", conf_bounds_beta()[2])
   )
 
-  output$upper <- renderText(
-    calculate_ci(beta_pars()$alpha1, beta_pars()$beta1, input$ci)[3] %>%
-      paste("Upper bound:", .)
+  output$beta_upper <- renderText(
+    paste("Upper bound:", conf_bounds_beta()[3])
   )
   
-  output$overlap <- renderText({
-    posterior_overlap <- posterior_overlap(
+  output$proportions_overlap <- renderText({
+    post_overlap <- posterior_overlap(
       beta_distribution(beta_pars()$alpha1, beta_pars()$beta1),
       beta_distribution(beta_pars()$alpha2, beta_pars()$beta2)
     )
-    paste0("Are we 95% certain the true proportions are different: ", posterior_overlap)
+    paste0("Are we 95% certain the true proportions are different: ", post_overlap)
   })
   
   #############
@@ -98,18 +99,106 @@ function(input, output, session) {
                                     "density"),
                    normal_posterior(normal_pars()$mu2, 
                                     normal_pars()$sig2, 
-                                    "density")
+                                    "density"),
+                   type = "mean"
     )
   })
   
+  normal_distribution_grid1 <- reactive({
+    normal_posterior(normal_pars()$mu1, 
+                     normal_pars()$sig1, 
+                     "distribution")
+  })
+  
   output$normal_distribution <- renderPlotly(
-    plot_posterior(normal_posterior(normal_pars()$mu1, 
-                                    normal_pars()$sig1, 
-                                    "distribution"),
+    plot_posterior(normal_distribution_grid1(),
                    normal_posterior(normal_pars()$mu2, 
                                     normal_pars()$sig2, 
-                                    "distribution")
+                                    "distribution"),
+                   type = "mean"
     )
+  )
+  
+  output$means_overlap <- renderText({
+    post_overlap <- posterior_overlap(
+      normal_distribution(normal_pars()$mu1, normal_pars()$sig1),
+      normal_distribution(normal_pars()$mu2, normal_pars()$sig2)
+    )
+    paste0("Are we 95% certain the true proportions are different: ", post_overlap)
+  }) 
+  
+  conf_bounds_normal <- reactive({
+    calculate_ci_grid(normal_distribution_grid1(), input$normal_ci)
+  })
+  
+  output$normal_low <- renderText(
+    paste("Lower bound:", conf_bounds_normal()[1])
+  )
+  
+  output$normal_midpoint <- renderText(
+    paste("Mid point:", conf_bounds_normal()[2])
+  )
+  
+  output$normal_upper <- renderText(
+    paste("Upper bound:", conf_bounds_normal()[3])
+  )
+  
+  #############
+  ### Tab 3 ###
+  #############
+  
+  poisson_pars <- reactive({
+    list(alpha1 = input$mean_cnt1 * input$count_n1 + .001,
+         beta1  = input$count_n1 + .001,
+         alpha2 = ifelse(is.null(input$count_n2), NULL, input$mean_cnt2 * input$count_n2 + .001),
+         beta2  = ifelse(is.null(input$count_n2), NULL,input$count_n2 + .001))
+  })
+  
+  output$poisson_density <- renderPlotly({
+    plot_posterior(poisson_posterior(poisson_pars()$alpha1, 
+                                     poisson_pars()$beta1, 
+                                    "density"),
+                   poisson_posterior(poisson_pars()$alpha2, 
+                                     poisson_pars()$beta2, 
+                                     "density"),
+                   type = "rate"
+    )
+  })
+  
+  output$poisson_distribution <- renderPlotly({
+    plot_posterior(poisson_posterior(poisson_pars()$alpha1, 
+                                     poisson_pars()$beta1, 
+                                     "distribution"),
+                   poisson_posterior(poisson_pars()$alpha2, 
+                                     poisson_pars()$beta2, 
+                                     "distribution"),
+                   type = "rate"
+    )
+  })
+  
+  output$counts_overlap <- renderText({
+    post_overlap <- posterior_overlap(
+      poisson_distribution(poisson_pars()$alpha1, poisson_pars()$beta1),
+      poisson_distribution(poisson_pars()$alpha2, poisson_pars()$beta2)
+    )
+    paste0("Are we 95% certain the true proportions are different: ", post_overlap)
+  }) 
+  
+  
+  conf_bounds_poisson <- reactive({
+    calculate_ci_poisson(poisson_pars()$alpha1, poisson_pars()$beta1, input$poisson_ci)
+  })
+  
+  output$poisson_low <- renderText(
+    paste("Lower bound:", conf_bounds_poisson()[1])
+  )
+  
+  output$poisson_midpoint <- renderText(
+    paste("Mid point:", conf_bounds_poisson()[2])
+  )
+  
+  output$poisson_upper <- renderText(
+    paste("Upper bound:", conf_bounds_poisson()[3])
   )
   
 }

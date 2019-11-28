@@ -1,6 +1,4 @@
-# currently works for beta only
-# needs to be expanded if we want to 
-# include other probability distributions
+
 posterior_overlap <- function(dens1, 
                               dens2,
                               ci = .95) {
@@ -10,15 +8,19 @@ posterior_overlap <- function(dens1,
   no_overlap(dens1_borders, dens2_borders)
 }
 
-determine_order <- function(dens1, dens2) {
-  (dens2(.5) > dens1(.5)) + 1
-}
-
 beta_distribution <- function(alpha, beta) {
   function(x) qbeta(x, alpha, beta)
 }
 
-determine_borders <- function(dens, ci) {
+normal_distribution <- function(mu, sigma) {
+  function(x) qnorm(x, mean = mu, sd = sigma)
+}
+
+poisson_distribution <- function(alpha, beta) {
+  function(x) qgamma(x, alpha, beta)
+}
+
+determine_borders <- function(dens, ci = .95) {
   dens(c(.5 - ci/2, .5 + ci/2))
 }
 
