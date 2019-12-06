@@ -1,0 +1,14 @@
+There are three tests available in this dashboard. Which one to use depends on the nature of the data.
+
+If your data is an event that does or does not happen, you use the proportions tab. Examples are clickthrough in an A/B test and approval or disapproval of a product. 
+
+The data can be in two forms. Either you enter the total events and nonevents (e.g. 1223 clickthroughs, 4258 non-clickthroughs), or the already calculated proportion and the total group size (clickthrough rate is 0.2872, group size is 5481).
+
+When your data is a value, you use the means tab. Examples are the overall satisfaction score of our users or revenue that realtors bring us.
+
+You need the mean (sum of all values, divided by the group size), the standard deviation (average deviation of the mean), and group size of the data. You can calculate these with Excel or with online tools. If you are unsure if you calculate them correctly, consult a data scientist.
+
+If you are counting something, you use the counts tab. Examples are the number of daily complaints we receive or the number of times our website gets mentioned in the media each month.
+
+You need the average count (sum of all counts, divided by the number of counts) and the number of counts. You can calculate these with Excel or with online tools. If you are unsure if you calculate them correctly, consult a data scientist.
+
