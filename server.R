@@ -48,7 +48,7 @@ function(input, output, session) {
   )
 
   conf_bounds_beta <- reactive({
-    calculate_ci(beta_pars()$alpha1, beta_pars()$beta1, input$ci)
+    calculate_ci(beta_pars()$alpha1, beta_pars()$beta1, 95)
   })
   
   output$beta_low <- renderText(
@@ -128,7 +128,7 @@ function(input, output, session) {
   }) 
   
   conf_bounds_normal <- reactive({
-    calculate_ci_grid(normal_distribution_grid1(), input$normal_ci)
+    calculate_ci_grid(normal_distribution_grid1(), 95)
   })
   
   output$normal_low <- renderText(
@@ -186,7 +186,7 @@ function(input, output, session) {
   
   
   conf_bounds_poisson <- reactive({
-    calculate_ci_poisson(poisson_pars()$alpha1, poisson_pars()$beta1, input$poisson_ci)
+    calculate_ci_poisson(poisson_pars()$alpha1, poisson_pars()$beta1, 95)
   })
   
   output$poisson_low <- renderText(

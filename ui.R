@@ -12,6 +12,31 @@ fluidPage(
   tabsetPanel(
     type = "tabs",
     
+    tabPanel("Intro",
+             br(),
+             h4("What test to use?"),
+             helpText(readLines("explanations/intro_text.txt")[1]),
+             hr(),
+             
+             h5("Proportions"),
+             helpText(readLines("explanations/intro_text.txt")[3]),
+             h5("What data to bring?"),
+             helpText(readLines("explanations/intro_text.txt")[5]),
+             hr(),
+             
+             h5("Means"),
+             helpText(readLines("explanations/intro_text.txt")[7]),
+             h5("What data to bring?"),
+             helpText(readLines("explanations/intro_text.txt")[9]),
+             hr(),
+             
+             h5("Counts"),
+             helpText(readLines("explanations/intro_text.txt")[11]),
+             h5("What data to bring?"),
+             helpText(readLines("explanations/intro_text.txt")[13])
+             ),
+    
+    
     tabPanel("Proportions", 
              
              sidebarLayout(
@@ -21,49 +46,43 @@ fluidPage(
                  helpText("The plots and the statistics will be calculated",
                           "as soon as you enter the data below."),
                  
-                 radioButtons("data_entry_method", label = h4("How to enter the data"),
-                              choices = list("Cases + Noncases" = 1, "N + Proportion" = 2),
+                 radioButtons("data_entry_method", label = h4("How to enter the data?"),
+                              choices = list("Events + Nonevents" = 1, "Group Size + Proportion" = 2),
                               selected = 1),
                  
                  conditionalPanel("input.data_entry_method == 1",
-                                  numericInput("cases", "Cases 1", value = NULL)),
+                                  numericInput("cases", "Total Events", value = NULL)),
                  conditionalPanel("input.data_entry_method == 1",
-                                  numericInput("noncases", "Noncases 1", value = NULL)),
-                 conditionalPanel("input.data_entry_method == 1",
-                                  numericInput("cases2", "Cases 2 (optional)", value = NULL)),
-                 conditionalPanel("input.data_entry_method == 1",
-                                  numericInput("noncases2", "Noncases 2 (optional)", value = NULL)),
-                 
+                                  numericInput("noncases", "Total Nonevents", value = NULL)),
                  
                  conditionalPanel("input.data_entry_method == 2",
-                                  numericInput("n", "N", value = NULL)),
+                                  numericInput("n", "Group Size", value = NULL)),
                  conditionalPanel("input.data_entry_method == 2",
-                                  numericInput("prop", "Prop", value = NULL)),
-                 conditionalPanel("input.data_entry_method == 2",
-                                  numericInput("n2", "N 2 (optional)", value = NULL)),
-                 conditionalPanel("input.data_entry_method == 2",
-                                  numericInput("prop2", "Prop 2 (optional)", value = NULL)),
-                 hr(),
+                                  numericInput("prop", "Proportion", value = NULL)),
                  
-                 textOutput("proportions_overlap"),
-                 
-                 hr(),
-                 
-                 h4("For group 1 we are ...% sure the true proportion is between"),
-                 sliderInput("ci", "select %", min = 0, max = 100, value = 95),
+                 h5("We are 95% sure the true proportion is between"),
                  textOutput("beta_low"),
                  textOutput("beta_midpoint"),
-                 textOutput("beta_upper")
+                 textOutput("beta_upper"),
+                 
+                 hr(),
+                 helpText("If you want to compare to another group, fill in below"),
+                 conditionalPanel("input.data_entry_method == 1",
+                                  numericInput("cases2", "Events group 2 (optional)", value = NULL)),
+                 conditionalPanel("input.data_entry_method == 1",
+                                  numericInput("noncases2", "Nonevents group 2 (optional)", value = NULL)),
+                 conditionalPanel("input.data_entry_method == 2",
+                                  numericInput("n2", "Group Size group 2 (optional)", value = NULL)),
+                 conditionalPanel("input.data_entry_method == 2",
+                                  numericInput("prop2", "Proportion group 2 (optional)", value = NULL)),
+                 textOutput("proportions_overlap")
                ),
                
                mainPanel(
                  plotlyOutput("beta_density"),
                  hr(),
-                 plotlyOutput("beta_distribution"),
-                 hr(),
-                 h3("More Information"),
-                 helpText(readLines("explanations/expl_proportions.txt")[1]),
-                 helpText(readLines("explanations/expl_proportions.txt")[3]))
+                 plotlyOutput("beta_distribution")
+                 )
              )
     ),
     
@@ -74,34 +93,27 @@ fluidPage(
                  helpText("The plots and the statistics will be calculated",
                           "as soon as you enter the data below."),
                  
-                 numericInput("mean1", "Mean 1", value = NULL),
-                 numericInput("sd1", "Std Dev 1", value = NULL, min = 0),
-                 numericInput("normal_n1", "Sample Size 1", value = NULL, min = 0),
-                 numericInput("mean2", "Mean 2 (optional)", value = NULL),
-                 numericInput("sd2", "Std Dev 2 (optional)", value = NULL, min = 0),
-                 numericInput("normal_n2", "Sample Size 2 (optional)", value = NULL, min = 0),
+                 numericInput("mean1", "Mean", value = NULL),
+                 numericInput("sd1", "Standard Deviation", value = NULL, min = 0),
+                 numericInput("normal_n1", "Group Size", value = NULL, min = 0),
                  
-                 hr(),
-                 
-                 textOutput("means_overlap"),
-                 
-                 hr(),
-                 
-                 h4("For group 1 we are ...% sure the true mean is between"),
-                 sliderInput("normal_ci", "select %", min = 0, max = 100, value = 95),
+                 h5("We are 95% sure the true mean is between"),
                  textOutput("normal_low"),
                  textOutput("normal_midpoint"),
-                 textOutput("normal_upper")
-               ),
+                 textOutput("normal_upper"),
+                 
+                 hr(),
+                 helpText("If you want to compare to another group, fill in below"),
+                 numericInput("mean2", "Mean group 2 (optional)", value = NULL),
+                 numericInput("sd2", "Standard Deviation group 2 (optional)", value = NULL, min = 0),
+                 numericInput("normal_n2", "Sample Size group 2 (optional)", value = NULL, min = 0),
+                 textOutput("means_overlap")
+                ),
                
                mainPanel(
                  plotlyOutput("normal_density"),
                  hr(),
-                 plotlyOutput("normal_distribution"),
-                 hr(),
-                 h3("More Information"),
-                 helpText(readLines("explanations/expl_means.txt")[1]),
-                 helpText(readLines("explanations/expl_means.txt")[3])
+                 plotlyOutput("normal_distribution")
                )
              )
     ),
@@ -113,31 +125,25 @@ fluidPage(
                  helpText("The plots and the statistics will be calculated",
                           "as soon as you enter the data below."),
                  
-                 numericInput("mean_cnt1", "Average Count 1", value = NULL, min = 0),
-                 numericInput("count_n1", "Number of Counts 1", value = NULL, min = 0),
-                 numericInput("mean_cnt2", "Average Count 2", value = NULL, min = 0),
-                 numericInput("count_n2", "Number of Counts 2", value = NULL, min = 0),
+                 numericInput("mean_cnt1", "Average Count", value = NULL, min = 0),
+                 numericInput("count_n1", "Number of Counts", value = NULL, min = 0),
                  
-                 hr(),
-                 
-                 textOutput("counts_overlap"),
-                 
-                 hr(),
-                 
-                 h4("For group 1 we are ...% sure the true rate is between"),
-                 sliderInput("poisson_ci", "select %", min = 0, max = 100, value = 95),
+                 h5("We are 95% sure the true rate is between"),
                  textOutput("poisson_low"),
                  textOutput("poisson_midpoint"),
-                 textOutput("poisson_upper")
+                 textOutput("poisson_upper"),
+                 
+                 hr(),
+                 helpText("If you want to compare to another group, fill in below"),
+                 numericInput("mean_cnt2", "Average Count groups 2", value = NULL, min = 0),
+                 numericInput("count_n2", "Number of Counts group 2", value = NULL, min = 0),
+                 textOutput("counts_overlap")
                ),
                
                mainPanel(
                  plotlyOutput("poisson_density"),
                  hr(),
-                 plotlyOutput("poisson_distribution"),
-                 hr(),
-                 h3("More Information"),
-                 helpText(readLines("explanations/expl_counts.txt")[1])
+                 plotlyOutput("poisson_distribution")
                )
              )
     ),
