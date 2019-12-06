@@ -99,16 +99,16 @@ plot_posterior <- function(x,
   )
   
   x_lab <- list(
-    title = glue::glue("{capitalise(type)} Value"),
+    title = paste(capitalise(type),  "Value"),
     titlefont = f,
     range = c(x_range[1], x_range[2])
   )
   
   if (tail(x$p, 1) == max(x$p)) {
-    title_text <- glue::glue("Probability true {type} is smaller than x")
+    title_text <- paste("Probability true", type, "is smaller than x")
     y_title    <- "Probability"
   } else {
-    title_text <- glue::glue("Probability true {type} is exactly x")
+    title_text <- paste("Probability true", type, "is exactly x")
     y_title    <- "Density"
   }
   
@@ -147,8 +147,9 @@ plot_posterior <- function(x,
 calculate_ci_grid <- function(grid, width) {
   low  <- .5 - ((width / 100) / 2)
   high <- .5 + ((width / 100) / 2)
-  purrr::map_dbl(c(low, 0.5, high),
-                 ~find_closest(.x, grid)) %>% 
+  c(find_closest(low, grid),
+    find_closest(low, 0.5),
+    find_closest(low, high)) %>% 
     round(3)
 }
 
